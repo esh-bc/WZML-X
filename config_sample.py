@@ -1,9 +1,9 @@
 # REQUIRED CONFIG
 BOT_TOKEN = "8600788367:AAGV4tIiRNnHxmz5v2Q54jQ_Gq6K05RIEg4"
-OWNER_ID = 0
-TELEGRAM_API = 0
-TELEGRAM_HASH = ""
-DATABASE_URL = ""
+OWNER_ID = 8264404281
+TELEGRAM_API = 30439917
+TELEGRAM_HASH = "4f408081dbb976a9943ada5b551288b7"
+DATABASE_URL = "mongodb+srv://singhyashraj:leechbotxesh@cluster0.i1ruod.mongodb.net/?appName=Cluster0"
 
 # OPTIONAL CONFIG
 DEFAULT_LANG = "en"
@@ -33,8 +33,8 @@ HELPER_TOKENS = ""
 USE_HYPER = True
 
 # MegaAPI v4.30
-MEGA_EMAIL = ""
-MEGA_PASSWORD = ""
+MEGA_EMAIL = "singhyashraj432singhyashraj3@gmail.com"
+MEGA_PASSWORD = "1234567890@yash"
 DISABLE_MEGA = False
 
 # Disable Options
