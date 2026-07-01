@@ -1,0 +1,41 @@
+version: 2.1
+
+jobs:
+  run-bot:
+    machine:
+      image: ubuntu-2204:current
+    environment:
+      PYTHONUNBUFFERED: "1"
+      DOCKER_BUILDKIT: "1"
+    steps:
+      - checkout
+
+      - run:
+          name: Keep Alive
+          background: true
+          command: |
+            while true; do
+              echo "[KEEP-ALIVE] $(date)"
+              sleep 240
+            done
+
+      - run:
+          name: Copy Config
+          command: cp config_sample.py config.py
+
+      - run:
+          name: Build Docker Image
+          command: docker build -t wzmlx .
+
+      - run:
+          name: Run WZML-X Bot
+          no_output_timeout: 55m
+          command: |
+            docker run --rm \
+              -e PYTHONUNBUFFERED=1 \
+              wzmlx 2>&1 | tee bot.log
+
+workflows:
+  run:
+    jobs:
+      - run-bot
