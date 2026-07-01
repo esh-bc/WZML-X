@@ -4,7 +4,6 @@ from re import search as re_search
 from contextlib import suppress
 from secrets import token_hex
 from yt_dlp import YoutubeDL, DownloadError
-from yt_dlp.networking.impersonate import ImpersonateTarget
 
 from .... import task_dict_lock, task_dict
 from ....core.config_manager import BinConfig
@@ -19,6 +18,14 @@ from ...telegram_helper.message_utils import send_status_message
 from ..status_utils.yt_dlp_status import YtDlpStatus
 
 LOGGER = getLogger(__name__)
+
+
+def get_cookie_file(user_dict):
+    if not user_dict.get("USE_DEFAULT_COOKIE", False):
+        usr_cookie = user_dict.get("USER_COOKIE_FILE", "")
+        if usr_cookie and ospath.exists(usr_cookie):
+            return usr_cookie
+    return "cookies.txt"
 
 
 class MyLogger:
@@ -72,27 +79,6 @@ class YoutubeDLHelper:
             "writethumbnail": True,
             "trim_file_name": 220,
             "ffmpeg_location": f"/bin/{BinConfig.FFMPEG_NAME}",
-            "concurrent_fragments": 8,
-            "impersonate": ImpersonateTarget.from_str("chrome"),
-            "socket_timeout": 30,
-            "downloader": {
-                "http": f"/bin/{BinConfig.ARIA2_NAME}",
-                "https": f"/bin/{BinConfig.ARIA2_NAME}",
-            },
-            "downloader_args": {
-                BinConfig.ARIA2_NAME: [
-                    "-x16", "-k1M", "-s16",
-                    "--max-tries=5", "--retry-wait=3",
-                ],
-            },
-            "extractor_args": {
-                "youtube": {
-                    "player_client": ["mweb"],
-                    "skip": ["webpage", "configs"],
-                },
-                "youtubetab": {"skip": ["webpage"]},
-            },
-            "hls_use_mpegts": True,
             "fragment_retries": 10,
             "retries": 10,
             "retry_sleep_functions": {
@@ -102,13 +88,7 @@ class YoutubeDLHelper:
                 "extractor": lambda n: 3,
             },
         }
-        cookie_to_use = (
-            usr_cookie
-            if not self._listener.user_dict.get("USE_DEFAULT_COOKIE", False)
-            and (usr_cookie := self._listener.user_dict.get("USER_COOKIE_FILE", ""))
-            and ospath.exists(usr_cookie)
-            else "cookies.txt"
-        )
+        cookie_to_use = get_cookie_file(self._listener.user_dict)
         self.opts["cookiefile"] = cookie_to_use
         LOGGER.info(
             f"Using cookies.txt file: {cookie_to_use} | User ID : {self._listener.user_id}"
